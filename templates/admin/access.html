@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventor : access</title>
+    <link rel="stylesheet" href="/static/css/bootstrap_5-2-2.css">
+    <script src="/static/js/bootstrap_5-2-2.js"></script>
+</head>
+
+<body>
+
+    {% include "/menu.html" %}
+
+    <!-- form add access -->
+    <div class="container mt-3" style="width: 450px;">
+        <form action="/admin/user/fn_add_access" method="POST" class="d-flex m-2 align-items-center">
+
+            <div class="form-floating me-3">
+                <input type="text" style="width: 250px;" class="form-control" id="" placeholder="access" name="access"
+                    required>
+                <label for="floatingInput">Add access</label>
+            </div>
+
+            <div class="">
+                <button type="submit" class="btn btn-primary" style="width: 110px;">Add project</button>
+            </div>
+
+        </form>
+    </div>
+    <!-- form add access -->
+
+    <div class="container" style="width: 500px;">
+        <table class="table border-top">
+            <thead>
+                <tr>
+                    <th scope="col">Project</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for row in data %}
+
+                <tr>
+                    <td class="align-middle">{{row[1]}}</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop{{row[0]}}">
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal{{row[0]}}">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- form edit access -->
+                <form action="/admin/fn_edit_access" method="POST">
+                    <div class="modal fade" id="staticBackdrop{{row[0]}}" data-bs-backdrop="static"
+                        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-floating mb-3">
+                                        <input type="hidden" name="no" value="{{row[0]}}">
+                                        <input type="text" class="form-control" value="{{row[1]}}"
+                                            name="access">
+                                        <label>Access</label>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-outline-warning">Confirm edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- form delet user -->
+                <form action="/admin/fn_delete_access" , method="POST">
+                    <div class="modal fade" id="exampleModal{{row[0]}}" tabindex="-1"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Delete</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {{row[1]}}
+                                    <input type="hidden" class="form-control" value="{{row[0]}}" name="no">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-outline-danger">Confirm delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+
+</body>
+
+</html>

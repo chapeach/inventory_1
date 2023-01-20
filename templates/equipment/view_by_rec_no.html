@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment : view by record no.</title>
+    <link rel="stylesheet" href="/static/css/bootstrap_5-2-2.css">
+    <script src="/static/js/bootstrap_5-2-2.js"></script>
+</head>
+
+<body>
+
+    {% include "/menu.html" %}
+
+    <!-- form header -->
+    {% if data[0][10] ==  'wait_approve_draff' %}
+    <form action="/equipment/approve_draff" method="POST">
+        <div class="container mt-2 d-flex justify-content-between">
+            <input type="hidden" name="rec_no" value="{{data[0][3]}}">
+            <p>Note number : {{data[0][3]}}</p>
+            <button type="submit" class="btn btn-outline-success">Approve draff</button>
+        </div>
+    </form>
+    {% endif %}
+
+    {% if data[0][10] ==  'wait_receive' %}
+    <form action="/equipment/approve_receive" method="POST">
+        <div class="container mt-2 d-flex justify-content-between">
+            <input type="hidden" name="rec_no" value="{{data[0][3]}}">
+            <p>Note number : {{data[0][3]}}</p>
+            <button type="submit" class="btn btn-outline-success">Approve receive</button>
+        </div>
+    </form>
+    {% endif %}
+
+    {% if data[0][10] ==  'received' %}
+    <div class="container mt-2 d-flex justify-content-between">
+        <p>Note number : {{data[0][3]}}</p>
+    </div>
+    {% endif %}
+
+    <!-- form table -->
+    <div class="container">
+
+        <table class="table border-top mt-2">
+            <thead>
+                <tr>
+                    <th scope="col">Date time</th>
+                    <th scope="col">Record Name</th>
+                    <th scope="col">Item</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Move from</th>
+                    <th scope="col">Move to</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Remark</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{row[1]}}</td>
+                    <td>{{row[2]}}</td>
+                    <td>{{row[4]}}</td>
+                    <td>{{row[5]}}</td>
+                    <td>{{row[6]}}</td>
+                    <td>{{row[7]}}</td>
+                    <td>{{row[8]}}</td>
+                    <td>{{row[9]}}</td>
+                    {% if row[10] != "received" %}
+                    <td>
+                        Revise
+
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal{{row[0]}}">Delete</button>
+
+                        <form action="/equipment/add_csv/delete_by_rec", method="POST">
+                            <!-- Modal delete -->
+                            <div class="modal fade" id="exampleModal{{row[0]}}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm delete</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="no" value="{{row[0]}}">
+                                            <input type="hidden" name="rec_no" value="{{row[3]}}">
+                                            item : {{row[4]}} <br>
+                                            description : {{row[5]}}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-outline-danger">Confirm delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </td>
+                    {% endif %}
+                    {% if row[10] == "received" %}
+                    <td></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    <!-- form table -->
+
+</body>
+
+</html>

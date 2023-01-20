@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory : login</title>
+    <link rel="stylesheet" href="/static/css/bootstrap_5-2-2.css">
+    <script src="/static/js/bootstrap_5-2-2.js"></script>
+</head>
+
+<body class="m-5">
+
+    <div class="container border rounded-2" style="width: 500px;">
+        <form action="/fn_login" method="POST">
+            <div class="p-2 bg-white text-dark">
+                <h3 class="text-secondary">Inventory : login</h3>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="" placeholder="name@example.com" name="email" required>
+                <label for="floatingInput">Email address</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password" required>
+                <label for="floatingPassword">Password</label>
+            </div>
+            <div class="d-flex justify-content-center p-3">
+                <button type="submit" class="btn btn-primary" style="width: 100px;">Login</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+
+</html>

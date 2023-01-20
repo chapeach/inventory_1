@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventor : item</title>
+    <link rel="stylesheet" href="/static/css/bootstrap_5-2-2.css">
+    <script src="/static/js/bootstrap_5-2-2.js"></script>
+</head>
+
+<body>
+
+    {% include "/menu.html" %}
+
+    <div class="container">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Date Time</th>
+                    <th scope="col">Record name</th>
+                    <th scope="col">Record number</th>
+                    <th scope="col">Item</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Move_from</th>
+                    <th scope="col">Move_to</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Remark</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for row in data %}
+                <tr>
+                    <td class="align-middle">{{row[1]}}</td>
+                    <td class="align-middle">{{row[2]}}</td>
+                    <td class="align-middle">{{row[3]}}</td>
+                    <td class="align-middle">{{row[4]}}</td>
+                    <td class="align-middle">{{row[5]}}</td>
+                    <td class="align-middle">{{row[6]}}</td>
+                    <td class="align-middle">{{row[7]}}</td>
+                    <td class="align-middle">{{row[8]}}</td>
+                    <td class="align-middle">{{row[9]}}</td>
+                    <th class="align-middle">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal{{row[0]}}">
+                            Delete
+                        </button>
+
+                    </th>
+                </tr>
+                <!---->
+                <!-- Modal -->
+                <form action="/admin/log/upload_csv/fn_delete_row" method="POST">
+                    <div class="modal fade" id="exampleModal{{row[0]}}" tabindex="-1"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm delete data</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="no" value="{{row[0]}}">
+                                    Item : {{row[4]}} <br>
+                                    Description : {{row[5]}} <br>
+                                    Quantity : {{row[8]}}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-outline-danger">Confirm delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- Modal -->
+                <!---->
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>

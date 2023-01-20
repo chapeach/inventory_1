@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment : add csv file</title>
+    <link rel="stylesheet" href="/static/css/bootstrap_5-2-2.css">
+    <script src="/static/js/bootstrap_5-2-2.js"></script>
+</head>
+
+<body>
+
+    {% include "/menu.html" %}
+
+    <!-- form add csv fle -->
+    <div class="container d-flex justify-content-center">
+
+        <form action="/equipment/fn_add_csv" method="POST" class="d-flex m-2 align-items-center"
+            enctype="multipart/form-data">
+
+            <div class="">
+                <input class="form-control" type="file" accept=".csv" id="formFile" style="width: 500px;" name="file">
+            </div>
+
+            <div class="ms-2">
+                <button type="submit" class="btn btn-primary" style="width: auto;">Summit csv file</button>
+            </div>
+
+        </form>
+
+    </div>
+    <!-- form add csv fle -->
+
+    <!-- form table -->
+    <div class="container">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Date time</th>
+                    <th scope="col">Record Name</th>
+                    <th scope="col">Record No.</th>
+                    <th scope="col">From</th>
+                    <th scope="col">to</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">View</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{row[1]}}</td>
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                    <td>{{row[6]}}</td>
+                    <td>{{row[7]}}</td>
+
+                    {% if row[10] == "wait_approve_draff" %}
+                    <td class="text-black-50">Wait approve draff</td>
+                    {% endif %}
+
+                    {% if row[10] == "wait_receive" %}
+                    <td class="text-warning">Wait confrim receive</td>
+                    {% endif %}
+
+                    {% if row[10] == "received" %}
+                    <td class="text-success">Received</td>
+                    {% endif %}
+
+                    <td>
+                        <a href="/equipment/add_csv/{{row[3]}}"><img src="/static/icon/search.svg" alt=""></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    <!-- form table -->
+
+</body>
+
+</html>

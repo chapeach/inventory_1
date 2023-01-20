@@ -1,0 +1,66 @@
+<nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="/">Inventory {{list_store}}</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+            <div class="container">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    </li>
+
+                   <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Equipment
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/equipment">equipment</a></li>
+                            <li><a class="dropdown-item" href="/equipment/add_csv">add csv file</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Admin
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/admin/user">User</a></li>
+                            <li><a class="dropdown-item" href="/admin/access">Access</a></li>
+                            <li><a class="dropdown-item" href="/admin/store">Store</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="/admin/item">Item</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="/admin/log/upload_csv">Log upload csv</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+
+            <div class="container">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex justify-content-end">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page">{{session["email"]}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/fn_logout">logout</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</nav>

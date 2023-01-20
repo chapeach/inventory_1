@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventor : user</title>
+    <link rel="stylesheet" href="/static/css/bootstrap_5-2-2.css">
+    <script src="/static/js/bootstrap_5-2-2.js"></script>
+</head>
+
+<body>
+
+    {% include "/menu.html" %}
+
+    <!-- form add user -->
+    <div class="container mt-3">
+        <form action="/admin/user/fn_add_user" method="POST" class="d-flex m-2 align-items-center">
+
+            <div class="form-floating me-3">
+                <input type="email" style="width: 460px;" class="form-control" id="" placeholder="name@example.com" name="email" required>
+                <label for="floatingInput">Email address</label>
+            </div>
+
+            <div class="form-floating me-3">
+                <input type="password" style="width: 460px;" class="form-control" id="floatingPassword" placeholder="Password" name="password"
+                    required>
+                <label for="floatingPassword">Password</label>
+            </div>
+
+            <div class="">
+                <button type="submit" class="btn btn-primary" style="width: 100px;">Add user</button>
+            </div>
+
+        </form>
+    </div>
+    <!-- form add user -->
+
+    <div class="container">
+        <table class="table border-top">
+            <thead>
+                <tr>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Password</th>
+                    <th scope="col">Access</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for row in data %}
+
+                <tr>
+                    <td class="align-middle">{{row[1]}}</td>
+                    <td class="align-middle">{{row[2]}}</td>
+                    <td class="align-middle">{{row[3]}}</td>
+                    <td class="align-middle">{{row[4]}}</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop{{row[0]}}">
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal{{row[0]}}">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- form edit user -->
+                <form action="/admin/user/fn_edit_user" method="POST">
+                    <div class="modal fade" id="staticBackdrop{{row[0]}}" data-bs-backdrop="static"
+                        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="no" value="{{row[0]}}">
+                                    <div class="form-floating mb-3">
+                                        <input type="email" readonly class="form-control" value="{{row[1]}}"
+                                            name="email">
+                                        <label>Email address</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" value="{{row[2]}}" name="password">
+                                        <label>Password</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" aria-label="Default select example" name="access">
+                                            <option value="{{row[3]}}">{{row[3]}}</option>
+                                            {% for i in access %}
+                                            <option value="{{i[1]}}">{{i[1]}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label>Access</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" aria-label="Default select example" name="status">
+                                            <option value="{{row[4]}}">{{row[4]}}</option>
+                                            {% if row[4] != "enable" %}
+                                            <option value="enable">enable</option>
+                                            {% endif %}
+                                            {% if row[4] != "disable" %}
+                                            <option value="disable">disable</option>
+                                            {% endif %}
+                                        </select>
+                                        <label>Status</label>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-outline-warning">Confirm edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- form delet user -->
+                <form action="/admin/user/fn_delete_user" , method="POST">
+                    <div class="modal fade" id="exampleModal{{row[0]}}" tabindex="-1"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Delete</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {{row[1]}}
+                                    <input type="hidden" name="no" value="{{row[0]}}">
+                                    <input type="hidden" class="form-control" value="{{row[1]}}" name="email">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-outline-danger">Confirm delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+
+
+    </div>
+
+</body>
+
+</html>
