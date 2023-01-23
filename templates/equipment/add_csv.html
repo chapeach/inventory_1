@@ -14,24 +14,21 @@
 
     {% include "/menu.html" %}
 
+    {% if session["access"] != "admin" %}
     <!-- form add csv fle -->
     <div class="container d-flex justify-content-center">
-
         <form action="/equipment/fn_add_csv" method="POST" class="d-flex m-2 align-items-center"
             enctype="multipart/form-data">
-
             <div class="">
                 <input class="form-control" type="file" accept=".csv" id="formFile" style="width: 500px;" name="file">
             </div>
-
             <div class="ms-2">
                 <button type="submit" class="btn btn-primary" style="width: auto;">Summit csv file</button>
             </div>
-
         </form>
-
     </div>
     <!-- form add csv fle -->
+    {% endif %}
 
     <!-- form table -->
     <div class="container">

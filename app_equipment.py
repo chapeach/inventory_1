@@ -16,15 +16,18 @@ def page_equipment():
     if "email" not in session:
         return redirect("/login")
     else:
+        access_name = session["access"]
 
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'select * from tb_store'
+
+        sql = 'select * from tb_store where access = "{}"'.format(access_name)
         curs = cur.execute(sql)
-        data = curs.fetchall()
+        store_name = curs.fetchall()
+
         con.close()
 
-        return render_template("equipment/equipment.html", data=data)
+        return render_template("equipment/equipment.html", store_name=store_name, access_name=access_name)
 
 # page equipment add csv file
 @app_equipment.route("/equipment/add_csv")
@@ -32,10 +35,13 @@ def page_add_csv():
     if "email" not in session:
         return redirect("/login")
     else:
+        access = session["access"]
+        print(access)
         # return date table
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'select * from tb_upload_csv group by rec_no order by rec_no desc'
+        sql = 'select * from tb_upload_csv where access = "{}" group by rec_no order by rec_no desc'.format(access)
+        print(sql)
         curs = cur.execute(sql)
         data = curs.fetchall()
         con.close()
@@ -82,17 +88,17 @@ def addFileCSV():
                         move_to = row[3]
                         quantity = row[4]
                         remark = row[5]
-                        fn_rec_csv(date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark)
+                        fn_rec_csv(date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark, session["access"])
                         
                 return redirect("/equipment/add_csv")
         else:
             return redirect("/equipment/add_csv")
 
 # SQL
-def fn_rec_csv(date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark):
+def fn_rec_csv(date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark, session_access):
     con = sqlite3.connect("db/db.db")
     cur = con.cursor()
-    sql = 'insert into tb_upload_csv (date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark, status) values ("{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "wait_approve_draff")'.format(date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark)
+    sql = 'insert into tb_upload_csv (date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark, status, access) values ("{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "wait_approve_draff", "{}")'.format(date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark, session_access)
     curs = cur.execute(sql)
     con.commit()
     con.close()
@@ -142,40 +148,61 @@ def fn_delete_by_rec_no():
 
         return redirect("/equipment/add_csv/{}".format(rec_no))
 
+@app_equipment.route('/equipment/add_csv/edit_by_rec', methods=["POST"])
+def fn_edit_by_rec_no():
+    if "email" not in session:
+        return redirect("/login")
+    else:
+        no = request.form["no"]
+        rec_no = request.form["rec_no"]
+        qty = request.form["qty"]
+
+        con = sqlite3.connect("db/db.db")
+        cur = con.cursor()
+        sql_1 = 'update tb_upload_csv set quantity = {} where no = {}'.format(qty, no)
+        curs = cur.execute(sql_1)
+        con.commit()
+        con.close()
+
+        return redirect("/equipment/add_csv/{}".format(rec_no))
+
 # page view by equ by location ###################################################################
-@app_equipment.route('/equipment/<location>')
-def page_view_equ_by_location(location):
+@app_equipment.route('/equipment/<access>/<location>')
+def page_view_equ_by_location(access, location):
     if "email" not in session:
         return redirect("/login")
     else:
         # connect db and get data
+        access = access
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql_1 = 'select item, description, move_from, move_to from tb_upload_csv where status = "received" group by item'
+        sql_1 = 'select item, description, move_from, move_to, status, access from tb_upload_csv where status = "received" and access = "{}" group by item'.format(access)
         curs = cur.execute(sql_1)
         result = curs.fetchall()
-        
+
         # convert data to list
         result_1 = []
         for i in result:
             data = list(i)
             result_1.append(data)
-
+            
         # add qty.
         result_list = []
         for i in result_1:
-            sql_2 = 'SELECT sum(quantity) FROM tb_upload_csv WHERE status = "received" and item = "{}" and move_to = "Nesic_WH_NMA"'.format(i[0])
+            sql_2 = 'SELECT sum(quantity) FROM tb_upload_csv WHERE status = "received" and item = "{}" and move_to = "{}" and access = "{}"'.format(i[0], location, access)
             curs = cur.execute(sql_2)
             result_2 = curs.fetchall()
             result_2 = result_2[0][0]
+            if result_2 == None:
+                result_2 = 0
 
-            sql_3 = 'SELECT sum(quantity) FROM tb_upload_csv WHERE status = "received" and item = "{}" and move_from = "Nesic_WH_NMA"'.format(i[0])
+            sql_3 = 'SELECT sum(quantity) FROM tb_upload_csv WHERE status = "received" and item = "{}" and move_from = "{}" and access = "{}"'.format(i[0], location, access)
             curs = cur.execute(sql_3)
             result_3 = curs.fetchall()
             result_3 = result_3[0][0]
             if result_3 == None:
                 result_3 = 0
-                
+
             result_4 = result_2-result_3
             row = i
             row.append(result_4)

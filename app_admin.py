@@ -3,7 +3,7 @@ import sqlite3
 
 app_admin = Blueprint("admin", __name__)
 
-# page user
+# page user #####################################################################
 @app_admin.route("/admin/user")
 def page_user():
     if "email" not in session:
@@ -17,6 +17,7 @@ def page_user():
         sql_2 = 'select * from tb_access'
         curs = cur.execute(sql_2)
         access = curs.fetchall()
+        con.close()
         return render_template("admin/user.html", data=data, access=access)
 
 # fn add user
@@ -29,7 +30,7 @@ def fn_add_user():
         password = request.form["password"]
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'insert into tb_userlogin (email, password, access, status) values ("{}", "{}", "- No -", "disable")'.format(email, password)
+        sql = 'insert into tb_userlogin (email, password, access, status, level) values ("{}", "{}", "- No -", "disable", "0")'.format(email, password)
         curs = cur.execute(sql)
         con.commit()
         con.close()
@@ -45,10 +46,11 @@ def fn_edit_user():
         email = request.form["email"]
         password = request.form["password"]
         access = request.form["access"]
+        level = request.form["level"]
         status = request.form["status"]
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'update tb_userlogin set password = "{}", access = "{}", status = "{}" where no = "{}"'.format(password, access, status ,no)
+        sql = 'update tb_userlogin set password = "{}", access = "{}", status = "{}", level = "{}" where no = "{}"'.format(password, access, status, level, no)
         curs = cur.execute(sql)
         con.commit()
         con.close()
@@ -70,7 +72,7 @@ def fn_delete_user():
         con.close()
         return redirect("/admin/user")
 
-# page access
+# page access #####################################################################
 @app_admin.route("/admin/access")
 def page_access():
     if "email" not in session:
@@ -114,7 +116,7 @@ def fn_edit_access():
         con.close()
         return redirect("/admin/access")
 
-# fn delete user
+# fn delete user #####################################################################
 @app_admin.route("/admin/fn_delete_access", methods=["POST"])
 def fn_delete_access():
     if "email" not in session:
@@ -129,7 +131,7 @@ def fn_delete_access():
         con.close()
         return redirect("/admin/access")
 
-# store
+# store #####################################################################
 @app_admin.route("/admin/store")
 def page_location():
     if "email" not in session:
@@ -151,10 +153,12 @@ def fn_add_store():
     if "email" not in session:
         return redirect("/login")
     else:
+        access_name = session["access"]
+
         store = request.form["store"]
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'insert into tb_store (store) values ("{}")'.format(store)
+        sql = 'insert into tb_store (access, store) values ("{}", "{}")'.format(access_name, store)
         curs = cur.execute(sql)
         con.commit()
         con.close()
@@ -193,7 +197,7 @@ def fn_delete_location():
 # store
 
 
-# item
+# item #####################################################################
 @app_admin.route("/admin/item")
 def page_item():
     if "email" not in session:
@@ -256,7 +260,7 @@ def fn_delete_item():
         return redirect("/admin/item")
 # item
 
-# log
+# log #####################################################################
 @app_admin.route("/admin/log/upload_csv")
 def log_upload_csv():
     if "email" not in session:

@@ -23,9 +23,9 @@
                 </tr>
             </thead>
             <tbody>
-                {% for row in data %}
+                {% for row in store_name %}
                 <tr>
-                    <td><a href="/equipment/{{row[1]}}">{{row[1]}}</a></td>
+                    <td><a href="/equipment/{{access_name}}/{{row[2]}}">{{access_name}} : {{row[2]}}</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

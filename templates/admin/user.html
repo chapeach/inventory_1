@@ -19,13 +19,14 @@
         <form action="/admin/user/fn_add_user" method="POST" class="d-flex m-2 align-items-center">
 
             <div class="form-floating me-3">
-                <input type="email" style="width: 460px;" class="form-control" id="" placeholder="name@example.com" name="email" required>
+                <input type="email" style="width: 460px;" class="form-control" id="" placeholder="name@example.com"
+                    name="email" required>
                 <label for="floatingInput">Email address</label>
             </div>
 
             <div class="form-floating me-3">
-                <input type="password" style="width: 460px;" class="form-control" id="floatingPassword" placeholder="Password" name="password"
-                    required>
+                <input type="password" style="width: 460px;" class="form-control" id="floatingPassword"
+                    placeholder="Password" name="password" required>
                 <label for="floatingPassword">Password</label>
             </div>
 
@@ -44,6 +45,7 @@
                     <th scope="col">E-mail</th>
                     <th scope="col">Password</th>
                     <th scope="col">Access</th>
+                    <th scope="col">Level</th>
                     <th scope="col">Status</th>
                     <th scope="col">Action</th>
                 </tr>
@@ -56,6 +58,7 @@
                     <td class="align-middle">{{row[1]}}</td>
                     <td class="align-middle">{{row[2]}}</td>
                     <td class="align-middle">{{row[3]}}</td>
+                    <td class="align-middle">{{row[5]}}</td>
                     <td class="align-middle">{{row[4]}}</td>
                     <td>
                         <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
@@ -99,6 +102,26 @@
                                             {% endfor %}
                                         </select>
                                         <label>Access</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" aria-label="Default select example" name="level">
+                                            {% if row[5] == "0" %}
+                                            <option value="0">0</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            {% endif %}
+                                            {% if row[5] == "1" %}
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="0">0</option>
+                                            {% endif %}
+                                            {% if row[5] == "2" %}
+                                            <option value="2">2</option>
+                                            <option value="1">1</option>
+                                            <option value="0">0</option>
+                                            {% endif %}
+                                        </select>
+                                        <label>Level</label>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <select class="form-select" aria-label="Default select example" name="status">

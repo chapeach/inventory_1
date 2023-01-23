@@ -20,13 +20,13 @@ def fn_login():
         curs = cur.execute(sql)
         data = curs.fetchall()
         data = data[0]
-        print(data[3])
-        if data[3] == "disable":
+        print(data[4])
+        if data[4] == "disable":
             return redirect("/login")
         else:
             if len(data) > 0:
                 session['email'] = data[1]
-                session['acces'] = data[3]
+                session['access'] = data[3]
                 print(session)
                 return redirect("/")
             else:
