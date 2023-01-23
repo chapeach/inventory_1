@@ -27,6 +27,7 @@ def fn_login():
             if len(data) > 0:
                 session['email'] = data[1]
                 session['access'] = data[3]
+                session['level'] = data[5]
                 print(session)
                 return redirect("/")
             else:

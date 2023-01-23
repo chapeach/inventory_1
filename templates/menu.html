@@ -16,7 +16,7 @@
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
 
-                   <li class="nav-item dropdown">
+                    <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             Equipment
@@ -27,6 +27,7 @@
                         </ul>
                     </li>
 
+                    {% if session["access"] == "admin" %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
@@ -46,6 +47,7 @@
                             <li><a class="dropdown-item" href="/admin/log/upload_csv">Log upload csv</a></li>
                         </ul>
                     </li>
+                    {% endif %}
 
                 </ul>
             </div>

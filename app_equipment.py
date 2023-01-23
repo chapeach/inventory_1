@@ -219,10 +219,12 @@ def approve_draff():
         return redirect("/login")
     else:
         rec_no = request.form["rec_no"]
+        email = session["email"]
         
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'update tb_upload_csv set status = "wait_receive" where rec_no = "{}"'.format(rec_no)
+        sql = 'update tb_upload_csv set status = "wait_receive", approve_draff = "{}" where rec_no = "{}"'.format(email, rec_no)
+        print(sql)
         curs = cur.execute(sql)
         con.commit()
         con.close()

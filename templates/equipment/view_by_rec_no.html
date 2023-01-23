@@ -15,6 +15,8 @@
     {% include "/menu.html" %}
 
     <!-- form header -->
+
+    {% if session['level'] == "1" %}
     {% if data[0][10] ==  'wait_approve_draff' %}
     <form action="/equipment/approve_draff" method="POST">
         <div class="container mt-2 d-flex justify-content-between">
@@ -40,6 +42,7 @@
         <p>Note number : {{data[0][3]}}</p>
     </div>
     {% endif %}
+    {% endif %}
 
     <!-- form table -->
     <div class="container">
@@ -55,7 +58,9 @@
                     <th scope="col">Move to</th>
                     <th scope="col">Quantity</th>
                     <th scope="col">Remark</th>
+                    {% if session['level'] == "1" %}
                     <th scope="col">Action</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -71,6 +76,7 @@
                     <td>{{row[9]}}</td>
                     {% if row[10] != "received" %}
                     <td>
+                        {% if session['level'] == "1" %}
                         <div class="d-flex">
                             <!-- Button trigger modal edit -->
                             <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
@@ -81,6 +87,7 @@
                             <button type="button" class="btn btn-outline-danger ms-2" data-bs-toggle="modal"
                                 data-bs-target="#exampleModal{{row[0]}}">Delete</button>
                         </div>
+                        {% endif %}
 
                         <!-- Modal edit -->
                         <form action="/equipment/add_csv/edit_by_rec" , method="POST">
