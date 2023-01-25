@@ -92,9 +92,10 @@ def fn_add_access():
         return redirect("/login")
     else:
         access = request.form["access"]
+        store = request.form["store"]
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'insert into tb_access (access) values ("{}")'.format(access)
+        sql = 'insert into tb_access (access, store) values ("{}", "{}")'.format(access, store)
         curs = cur.execute(sql)
         con.commit()
         con.close()
@@ -137,15 +138,20 @@ def page_location():
     if "email" not in session:
         return redirect("/login")
     else:
-        def get_data_tb():
-            con = sqlite3.connect("db/db.db")
-            cur = con.cursor()
-            sql = 'select * from tb_store'
-            curs = cur.execute(sql)
-            data = curs.fetchall()
-            return data
-        data = get_data_tb()
-        return render_template("admin/store.html", data=data)
+ 
+        con = sqlite3.connect("db/db.db")
+        cur = con.cursor()
+
+        sql = 'select * from tb_store'
+        curs = cur.execute(sql)
+        store_name = curs.fetchall()
+
+        sql2 = 'select * from tb_access'
+        curs = cur.execute(sql2)
+        access_name = curs.fetchall()
+
+        con.close()
+        return render_template("admin/store.html", store_name=store_name, access_name=access_name)
 
 # fn add store : pass
 @app_admin.route("/admin/store/fn_add_store", methods=["POST"])
@@ -153,14 +159,15 @@ def fn_add_store():
     if "email" not in session:
         return redirect("/login")
     else:
-        access_name = session["access"]
-
+        access_name = request.form["access"]
         store = request.form["store"]
+
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
         sql = 'insert into tb_store (access, store) values ("{}", "{}")'.format(access_name, store)
         curs = cur.execute(sql)
         con.commit()
+
         con.close()
         return redirect("/admin/store")
 

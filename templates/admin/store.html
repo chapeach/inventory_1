@@ -19,7 +19,17 @@
         <form action="/admin/store/fn_add_store" method="POST" class="d-flex m-2 align-items-center">
 
             <div class="form-floating me-3">
-                <input type="text" style="width: 250px;" class="form-control" id="" placeholder="access" name="store"
+                <select class="form-select" style="width: 250px;" aria-label="Default select example" name="access">
+                    <option value="select project">select project</option>
+                    {% for i in access_name %}
+                    <option value="{{i[1]}}">{{i[1]}}</option>
+                    {% endfor %}
+                </select>
+                <label>Project name</label>
+            </div>
+
+            <div class="form-floating me-3">
+                <input type="text" style="width: 250px;" class="form-control" id="" placeholder="store" name="store"
                     required>
                 <label for="floatingInput">Add Store</label>
             </div>
@@ -36,15 +46,17 @@
         <table class="table border-top">
             <thead>
                 <tr>
+                    <th scope="col">Project</th>
                     <th scope="col">Store</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
 
-                {% for row in data %}
+                {% for row in store_name %}
 
                 <tr>
+                    <td class="align-middle">{{row[1]}}</td>
                     <td class="align-middle">{{row[2]}}</td>
                     <td>
                         <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
@@ -69,14 +81,27 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
+
                                 <div class="modal-body">
-                                    <div class="form-floating mb-3">
-                                        <input type="hidden" name="no" value="{{row[0]}}">
-                                        <input type="text" class="form-control" value="{{row[1]}}"
-                                            name="store">
+
+                                    <div class="form-floating mb-2">
+                                        <select class="form-select" style="width: 100%;" name="access">
+                                            <option value="select project">- select project -</option>
+                                            {% for i in access_name %}
+                                            <option value="{{i[1]}}">{{i[1]}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label>Project name</label>
+                                    </div>
+
+                                    <div class="form-floating">
+                                        <input type="hidden" style="width: 100%;" name="no" value="{{row[0]}}">
+                                        <input type="text" class="form-control" value="{{row[2]}}" name="store">
                                         <label>Store</label>
                                     </div>
+
                                 </div>
+
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-outline-secondary"
                                         data-bs-dismiss="modal">Close</button>

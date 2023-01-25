@@ -36,16 +36,14 @@ def page_add_csv():
         return redirect("/login")
     else:
         access = session["access"]
-        print(access)
         # return date table
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
         sql = 'select * from tb_upload_csv where access = "{}" group by rec_no order by rec_no desc'.format(access)
-        print(sql)
         curs = cur.execute(sql)
         data = curs.fetchall()
         con.close()
-        return render_template("equipment/add_csv.html", data=data)
+        return render_template("equipment/add_csv.html", data=data, msg_alerts="0")
 
 # fn add csv file
 @app_equipment.route("/equipment/fn_add_csv", methods=["POST"])
@@ -74,6 +72,35 @@ def addFileCSV():
             rec_no = int(rec_no)
             rec_no = str(rec_no)
 
+            file_name = file_path
+
+            # check database
+            check_list = []
+            with open(file_name) as file:
+                reader = csv.reader(file)
+                for i in reader:
+                    check_list.append(i)
+            check_list.pop(0)
+
+            # check item, description
+            for i in check_list:
+                con = sqlite3.connect("db/db.db")
+                cur = con.cursor()
+                sql = 'select item, description from tb_item where item = "{}" and description = "{}"'.format(i[0], i[1])
+                curs = cur.execute(sql)
+                row_result = curs.fetchall()
+                if len(row_result) == 0:
+                    access = session["access"]
+                    # return date table
+                    con = sqlite3.connect("db/db.db")
+                    cur = con.cursor()
+                    sql = 'select * from tb_upload_csv where access = "{}" group by rec_no order by rec_no desc'.format(access)
+                    curs = cur.execute(sql)
+                    data = curs.fetchall()
+                    con.close()
+                    return render_template("equipment/add_csv.html", data=data, msg_alerts="1")
+                    #return redirect("/equipment/add_csv", msg_alerts="1") # wait add fn alerts
+
             # get file csv to list
             file_name = file_path
             with open(file_name) as file:
@@ -98,7 +125,8 @@ def addFileCSV():
 def fn_rec_csv(date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark, session_access):
     con = sqlite3.connect("db/db.db")
     cur = con.cursor()
-    sql = 'insert into tb_upload_csv (date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark, status, access) values ("{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "wait_approve_draff", "{}")'.format(date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark, session_access)
+    sql = 'insert into tb_upload_csv (date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark, status, access) values '
+    sql = sql + '("{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "wait_approve_draff", "{}")'.format(date_time, rec_name, rec_no, item, description, move_from, move_to, quantity, remark, session_access)
     curs = cur.execute(sql)
     con.commit()
     con.close()
@@ -240,7 +268,7 @@ def approve_receive():
         
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'update tb_upload_csv set status = "received" where rec_no = "{}"'.format(rec_no)
+        sql = 'update tb_upload_csv set status = "received", approve_receive = "{}" where rec_no = "{}"'.format(session["email"], rec_no)
         curs = cur.execute(sql)
         con.commit()
         con.close()

@@ -14,7 +14,7 @@
 
     {% include "/menu.html" %}
 
-    <div class="container">
+    <div class="container-fluid">
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -27,6 +27,8 @@
                     <th scope="col">Move_to</th>
                     <th scope="col">Quantity</th>
                     <th scope="col">Remark</th>
+                    <th scope="col">Approve draff</th>
+                    <th scope="col">Approve receive</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -43,6 +45,8 @@
                     <td class="align-middle">{{row[7]}}</td>
                     <td class="align-middle">{{row[8]}}</td>
                     <td class="align-middle">{{row[9]}}</td>
+                    <td class="align-middle">{{row[12]}}</td>
+                    <td class="align-middle">{{row[13]}}</td>
                     <th class="align-middle">
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
