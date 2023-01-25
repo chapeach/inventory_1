@@ -83,23 +83,59 @@ def addFileCSV():
             check_list.pop(0)
 
             # check item, description
+            access = session["access"]
             for i in check_list:
                 con = sqlite3.connect("db/db.db")
                 cur = con.cursor()
                 sql = 'select item, description from tb_item where item = "{}" and description = "{}"'.format(i[0], i[1])
                 curs = cur.execute(sql)
                 row_result = curs.fetchall()
+
                 if len(row_result) == 0:
-                    access = session["access"]
-                    # return date table
-                    con = sqlite3.connect("db/db.db")
-                    cur = con.cursor()
-                    sql = 'select * from tb_upload_csv where access = "{}" group by rec_no order by rec_no desc'.format(access)
-                    curs = cur.execute(sql)
+                    sql_2 = 'select * from tb_upload_csv where access = "{}" group by rec_no order by rec_no desc'.format(access)
+                    curs = cur.execute(sql_2)
                     data = curs.fetchall()
                     con.close()
                     return render_template("equipment/add_csv.html", data=data, msg_alerts="1")
-                    #return redirect("/equipment/add_csv", msg_alerts="1") # wait add fn alerts
+                
+            # check quantity
+            sql_3 = 'select * from tb_store where access = "{}" and store = "{}"'.format(access,check_list[0][2])
+            curs = cur.execute(sql_3)
+            row_check_store = curs.fetchall()
+            if len(row_check_store) > 0:
+                for i in check_list:
+
+                    con = sqlite3.connect("db/db.db")
+                    cur = con.cursor()
+                    
+                    sql_qty_to = 'select item, description, sum(quantity) from tb_upload_csv where item = "{}" and access = "{}" and move_to = "{}"'.format(i[0], access, i[2])
+                    curs = cur.execute(sql_qty_to)
+                    qty_to = curs.fetchall()
+
+                    sql_qty_from = 'select item, description, sum(quantity) from tb_upload_csv where item = "{}" and access = "{}" and move_from = "{}"'.format(i[0], access, i[2])
+                    curs = cur.execute(sql_qty_from)
+                    qty_from = curs.fetchall()
+                    if qty_from[0][0] == None:
+                        qty_from = [[0,0,0]]
+
+                    con.close()
+
+                    qty_in = qty_to[0][2] - qty_from[0][2]
+                    qty_out = i[4]
+
+                    print("in =", qty_in)
+                    print("out =", qty_out)
+
+                    if int(qty_out) > int(qty_in):
+                        # ควรจะทำเป็นฟังชั่น
+                        con = sqlite3.connect("db/db.db")
+                        cur = con.cursor()
+                        sql_data = 'select * from tb_upload_csv where access = "{}" group by rec_no order by rec_no desc'.format(access)
+                        curs = cur.execute(sql_data)
+                        data = curs.fetchall()
+                        con.close()
+                        #
+                        return render_template("equipment/add_csv.html", data=data, msg_alerts="2") # msg alerts 0 = no alerts, 1 = alerts item or description incorrect , 2 = alerts qty incorrect
 
             # get file csv to list
             file_name = file_path
@@ -169,10 +205,18 @@ def fn_delete_by_rec_no():
 
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
+
         sql_1 = 'delete from tb_upload_csv where no = {}'.format(no)
         curs = cur.execute(sql_1)
         con.commit()
+
+        sql_check_row = 'select * from tb_upload_csv where rec_no = "{}"'.format(rec_no)
+        curs = cur.execute(sql_check_row)
+        check_row = curs.fetchall()
+
         con.close()
+        if len(check_row) == 0:
+            return redirect("/equipment/add_csv")
 
         return redirect("/equipment/add_csv/{}".format(rec_no))
 

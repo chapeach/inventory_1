@@ -21,6 +21,13 @@
         </div>
     </div>
     {% endif %}
+    {% if msg_alerts == "2" %}
+    <div class="container mt-2">
+        <div class="alert alert-danger" role="alert">
+            quantity incorrect
+        </div>
+    </div>
+    {% endif %}
 
     {% if session["access"] != "admin" %}
     <!-- form add csv fle -->
