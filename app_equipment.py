@@ -57,8 +57,6 @@ def addFileCSV():
             file_path = UPLOAD_FOLDER_CSV + uploaded_file.filename
             uploaded_file.save(file_path)
 
-            #record_path_datetime_csv(name_upload_file, date_time, file_path)
-            
             # get date time
             date_time = time.ctime()
             date_time = date_time[8:10] + " " + date_time[4:7] + " " + date_time[20:24] + " " + date_time[11:19]
@@ -91,11 +89,13 @@ def addFileCSV():
                 curs = cur.execute(sql)
                 row_result = curs.fetchall()
 
+                # show date
                 if len(row_result) == 0:
                     sql_2 = 'select * from tb_upload_csv where access = "{}" group by rec_no order by rec_no desc'.format(access)
                     curs = cur.execute(sql_2)
                     data = curs.fetchall()
                     con.close()
+
                     return render_template("equipment/add_csv.html", data=data, msg_alerts="1")
                 
             # check quantity

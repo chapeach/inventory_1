@@ -1,23 +1,30 @@
 from flask import Blueprint, redirect, render_template, request, session
 import sqlite3
+import time
 
 app_admin = Blueprint("admin", __name__)
 
-# page user #####################################################################
+######### page user #################################################################################
 @app_admin.route("/admin/user")
 def page_user():
     if "email" not in session:
         return redirect("/login")
     else:
+        # connect db
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql_1 = 'select * from tb_userlogin'
-        curs = cur.execute(sql_1)
+
+        # select userlogin
+        sql_select_userlogin = 'select * from tb_userlogin'
+        curs = cur.execute(sql_select_userlogin)
         data = curs.fetchall()
-        sql_2 = 'select * from tb_access'
-        curs = cur.execute(sql_2)
+
+        # select access
+        sql_select_access = 'select * from tb_access'
+        curs = cur.execute(sql_select_access)
         access = curs.fetchall()
         con.close()
+
         return render_template("admin/user.html", data=data, access=access)
 
 # fn add user
@@ -26,14 +33,28 @@ def fn_add_user():
     if "email" not in session:
         return redirect("/login")
     else:
-        email = request.form["email"]
-        password = request.form["password"]
+        # connect db
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'insert into tb_userlogin (email, password, access, status, level) values ("{}", "{}", "- No -", "disable", "0")'.format(email, password)
-        curs = cur.execute(sql)
+
+        # request form
+        email = request.form["email"]
+        password = request.form["password"]
+        
+        # check e-mail duplicate
+        sql_select_email = 'select * from tb_userlogin where email = "{}"'.format(email)
+        curs = cur.execute(sql_select_email)
+        data_email = curs.fetchall()
+        if len(data_email) > 0:
+            con.close()
+            return redirect("/admin/user")
+
+        # e-mail no duplicate is record to db
+        sql_insert_user = 'insert into tb_userlogin (email, password, access, status, level) values ("{}", "{}", "- No -", "disable", "0")'.format(email, password)
+        curs = cur.execute(sql_insert_user)
         con.commit()
         con.close()
+
         return redirect("/admin/user")
 
 # fn edit user
@@ -72,7 +93,7 @@ def fn_delete_user():
         con.close()
         return redirect("/admin/user")
 
-# page access #####################################################################
+######### access #################################################################################
 @app_admin.route("/admin/access")
 def page_access():
     if "email" not in session:
@@ -91,14 +112,25 @@ def fn_add_access():
     if "email" not in session:
         return redirect("/login")
     else:
-        access = request.form["access"]
-        store = request.form["store"]
+        # connect db
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'insert into tb_access (access, store) values ("{}", "{}")'.format(access, store)
-        curs = cur.execute(sql)
+
+        # check access duplicate
+        access = request.form["access"]
+        sql_select_access = 'select * from tb_access where access = "{}"'.format(access)
+        curs = cur.execute(sql_select_access)
+        data_access = curs.fetchall()
+        if len(data_access) > 0:
+            con.close()
+            return redirect("/admin/access")
+
+        # data no duplicate is record to db
+        sql_insert_access = 'insert into tb_access (access) values ("{}")'.format(access)
+        curs = cur.execute(sql_insert_access)
         con.commit()
         con.close()
+
         return redirect("/admin/access")
 
 # fn edit access
@@ -117,7 +149,7 @@ def fn_edit_access():
         con.close()
         return redirect("/admin/access")
 
-# fn delete user #####################################################################
+######### fn delete user #################################################################################
 @app_admin.route("/admin/fn_delete_access", methods=["POST"])
 def fn_delete_access():
     if "email" not in session:
@@ -132,46 +164,59 @@ def fn_delete_access():
         con.close()
         return redirect("/admin/access")
 
-# store #####################################################################
+######### store #################################################################################
 @app_admin.route("/admin/store")
 def page_location():
     if "email" not in session:
         return redirect("/login")
     else:
- 
+        # connect db
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
 
-        sql = 'select * from tb_store'
-        curs = cur.execute(sql)
+        # select store
+        sql_select_store = 'select * from tb_store'
+        curs = cur.execute(sql_select_store)
         store_name = curs.fetchall()
 
-        sql2 = 'select * from tb_access'
-        curs = cur.execute(sql2)
+        # select access
+        sql_select_access = 'select * from tb_access'
+        curs = cur.execute(sql_select_access)
         access_name = curs.fetchall()
-
         con.close()
+
         return render_template("admin/store.html", store_name=store_name, access_name=access_name)
 
-# fn add store : pass
+# fn add store
 @app_admin.route("/admin/store/fn_add_store", methods=["POST"])
 def fn_add_store():
     if "email" not in session:
         return redirect("/login")
     else:
+        # connect db
+        con = sqlite3.connect("db/db.db")
+        cur = con.cursor()
+
+        # request form
         access_name = request.form["access"]
         store = request.form["store"]
 
-        con = sqlite3.connect("db/db.db")
-        cur = con.cursor()
+        # check store duplicate
+        sql_select_store = 'select * from tb_store where access = "{}" and store = "{}"'.format(access_name, store)
+        curs = cur.execute(sql_select_store)
+        data_access_name = curs.fetchall()
+        if len(data_access_name) > 0:
+            return redirect("/admin/store")
+
+        # data no duplicate is record to db
         sql = 'insert into tb_store (access, store) values ("{}", "{}")'.format(access_name, store)
         curs = cur.execute(sql)
         con.commit()
-
         con.close()
+
         return redirect("/admin/store")
 
-# fn edit store : pass
+# fn edit store
 @app_admin.route("/admin/store/fn_edit_store", methods=["POST"])
 def fn_edit_location():
     if "email" not in session:
@@ -187,7 +232,7 @@ def fn_edit_location():
         con.close()
         return redirect("/admin/store")
 
-# fn delete store : pass
+# fn delete store
 @app_admin.route("/admin/store/fn_delete_store", methods=["POST"])
 def fn_delete_location():
     if "email" not in session:
@@ -203,8 +248,7 @@ def fn_delete_location():
         return redirect("/admin/store")
 # store
 
-
-# item #####################################################################
+######### item #################################################################################
 @app_admin.route("/admin/item")
 def page_item():
     if "email" not in session:
@@ -212,26 +256,40 @@ def page_item():
     else:
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql_1 = 'select * from tb_item'
+        sql_1 = 'select * from tb_item order by date_rec desc'
         curs = cur.execute(sql_1)
         data = curs.fetchall()
         return render_template("admin/item.html", data=data)
 
+# fn add item
 @app_admin.route("/admin/user/fn_add_item", methods=["POST"])
 def fn_add_item():
     if "email" not in session:
         return redirect("/login") 
     else:
+        # connect db
+        con = sqlite3.connect("db/db.db")
+        cur = con.cursor()
+
+        # request form
         item = request.form["item"]
         description = request.form["description"]
         unit = request.form["unit"]
 
-        con = sqlite3.connect("db/db.db")
-        cur = con.cursor()
-        sql_1 = 'insert into tb_item (item, description, unit) values ("{}", "{}", "{}")'.format(item, description, unit)
-        curs = cur.execute(sql_1)
+        # check item duplicate
+        sql_select_item = 'select * from tb_item where item = "{}"'.format(item)
+        curs = cur.execute(sql_select_item)
+        data_item = curs.fetchall()
+        if len(data_item) > 0:
+            con.close()
+            return redirect("/admin/item")
+
+        # item no duplicate is record to db
+        sql_insert_item = 'insert into tb_item (item, description, unit, date_rec) values ("{}", "{}", "{}", "{}")'.format(item, description, unit, time.time())
+        curs = cur.execute(sql_insert_item)
         con.commit()
         con.close()
+
         return redirect("/admin/item")
 
 @app_admin.route("/admin/user/fn_edit_item", methods=["POST"])
@@ -293,4 +351,3 @@ def fn_upload_csv_delete_row():
         con.commit()
         con.close()
         return redirect("/admin/log/upload_csv")
-# log
