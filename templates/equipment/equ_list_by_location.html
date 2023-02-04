@@ -14,7 +14,20 @@
 
     {% include "/menu.html" %}
 
-    <div class="container">
+    <div class="container d-flex">
+        <div class="p-2">Access : {{access}}</div>
+        <div class="p-2">Location : {{location}}</div>
+        <div class="ms-auto p-2">
+            <form action="/download" method="POST">
+                <input type="hidden" name="key_export_csv" value="inventorybystore">
+                <input type="hidden" name="access" value="{{access}}">
+                <input type="hidden" name="location" value="{{location}}">
+                <button type="submit" class="btn btn-outline-primary">Export CSV file</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container border border-start-0 border-end-0 border-bottom-0">
 
         <table class="table table-hover">
             <thead>
@@ -29,7 +42,7 @@
                 <tr>
                     <td>{{i[0]}}</td>
                     <td>{{i[1]}}</td>
-                    <td>{{i[6]}}</td>
+                    <td>{{i[2]}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

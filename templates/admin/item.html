@@ -15,7 +15,7 @@
     {% include "/menu.html" %}
 
     <!-- form add item -->
-    <div class="container mt-3">
+    <div class="container mt-3 d-flex">
         <form action="/admin/user/fn_add_item" method="POST" class="d-flex m-2 align-items-center">
 
             <div class="form-floating me-3">
@@ -40,11 +40,15 @@
                 <button type="submit" class="btn btn-primary" style="width: auto;">Add item</button>
             </div>
 
-            <div class="ms-3">
-                <button type="button" class="btn btn-outline-info" style="width: auto;">Export Item</button>
-            </div>
-
         </form>
+
+        <div class="ms-2 d-flex align-items-center">
+            <form action="/download" method="POST">
+                <input type="hidden" name="key_export_csv" value="itemall">
+                <button type="submit" class="btn btn-outline-primary">Export Item</button>
+            </form>
+        </div>
+
     </div>
     <!-- form add user -->
 
@@ -93,20 +97,17 @@
                                     <input type="hidden" name="no" value="{{row[0]}}">
 
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" value="{{row[1]}}"
-                                            name="item">
+                                        <input type="text" class="form-control" value="{{row[1]}}" name="item">
                                         <label>Item</label>
                                     </div>
 
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" value="{{row[2]}}"
-                                            name="description">
+                                        <input type="text" class="form-control" value="{{row[2]}}" name="description">
                                         <label>Description</label>
                                     </div>
 
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" value="{{row[3]}}"
-                                            name="unit">
+                                        <input type="text" class="form-control" value="{{row[3]}}" name="unit">
                                         <label>Unit</label>
                                     </div>
 

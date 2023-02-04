@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, request, session
+from flask import Blueprint, redirect, render_template, request, session, send_from_directory, send_file
 import sqlite3
 import os
 from datetime import datetime
@@ -96,7 +96,7 @@ def addFileCSV():
                     data = curs.fetchall()
                     con.close()
 
-                    return render_template("equipment/add_csv.html", data=data, msg_alerts="1")
+                    return render_template("equipment/add_csv.html", data=data, msg_alerts="1", i=i)
                 
             # check quantity
             sql_3 = 'select * from tb_store where access = "{}" and store = "{}"'.format(access,check_list[0][2])
@@ -245,7 +245,6 @@ def page_view_equ_by_location(access, location):
         return redirect("/login")
     else:
         # connect db and get data
-        access = access
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
         sql_1 = 'select item, description, move_from, move_to, status, access from tb_upload_csv where status = "received" and access = "{}" group by item'.format(access)
@@ -279,10 +278,53 @@ def page_view_equ_by_location(access, location):
             row = i
             row.append(result_4)
             result_list.append(row)
-        dataset = result_list
+
+        # cut 0
+        result_list_cut_0 = []
+        for k in result_list:
+            if k[6] != 0:
+                result_list_cut_0.append(k)
+
+        dataset = result_list_cut_0
+
+        # create pdf file
+        list_for_csv = []
+        for j in result_list_cut_0:
+            row = j
+            row.pop(5)
+            row.pop(4)
+            row.pop(3)
+            row.pop(2)
+            row.append(access)
+            row.append(location)
+            list_for_csv.append(row)
+
+        filenamecsv = "{}_{}.csv".format(access, location)
+        with open("static/files/export_csv/{}".format(filenamecsv), "w", newline = "") as f:
+            fw = csv.writer(f)
+            fw.writerow(["Item", "Description", "Quantity", "Access", "location"])
+            for j in list_for_csv:
+                fw.writerow(j)
+
         con.close()
 
-        return render_template("equipment/equ_list_by_location.html", dataset=dataset)
+        return render_template("equipment/equ_list_by_location.html", dataset=dataset, access=access, location=location)
+
+# download file ###################################################################
+@app_equipment.route('/download', methods=["POST"])
+def downloadFile():
+    key_export_csv = request.form["key_export_csv"]
+    if key_export_csv == "inventorybystore":
+        access = request.form["access"]
+        location = request.form["location"]
+        filename = access + "_" + location + ".csv"
+        dir_os = os.getcwd()
+        path = os.path.join(dir_os, 'static', 'files', 'export_csv', filename)
+        return send_file(path, as_attachment=True)
+    if key_export_csv == "itemall":
+        dir_os = os.getcwd()
+        path = os.path.join(dir_os, 'static', 'files', 'export_csv', 'item.csv')
+        return send_file(path, as_attachment=True)
 
 # approve draff ###################################################################
 @app_equipment.route('/equipment/approve_draff', methods=["POST"])

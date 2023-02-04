@@ -1,6 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, session
 import sqlite3
 import time
+import csv
 
 app_admin = Blueprint("admin", __name__)
 
@@ -259,6 +260,18 @@ def page_item():
         sql_1 = 'select * from tb_item order by date_rec desc'
         curs = cur.execute(sql_1)
         data = curs.fetchall()
+
+        # create csv
+        with open("static/files/export_csv/item.csv", "w", newline = "") as f:
+            fw = csv.writer(f)
+            fw.writerow(["Item", "Description"])
+            for j in data:
+                row = list(j)
+                row.pop(4)
+                row.pop(3)
+                row.pop(0)
+                fw.writerow(row)
+
         return render_template("admin/item.html", data=data)
 
 # fn add item
