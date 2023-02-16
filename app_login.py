@@ -1,5 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, session
 import sqlite3
+import time
 
 app_login = Blueprint("login", __name__)
 
@@ -16,11 +17,10 @@ def fn_login():
         password = request.form["password"]
         con = sqlite3.connect("db/db.db")
         cur = con.cursor()
-        sql = 'SELECT * from tb_userlogin WHERE email = "{}" AND password = "{}"'.format(email,password)
+        sql = 'select * from tb_userlogin where email = "{}" and password = "{}"'.format(email, password)
         curs = cur.execute(sql)
         data = curs.fetchall()
         data = data[0]
-        print(data[4])
         if data[4] == "disable":
             return redirect("/login")
         else:
@@ -28,6 +28,7 @@ def fn_login():
                 session['email'] = data[1]
                 session['access'] = data[3]
                 session['level'] = data[5]
+                print('Login : ' + time.ctime())
                 print(session)
                 return redirect("/")
             else:
@@ -38,5 +39,7 @@ def fn_login():
 # fn logout
 @app_login.route("/fn_logout")
 def fn_logout():
+    print('Logout : ' + time.ctime())
+    print(session)
     session.clear()
     return redirect("/login")
