@@ -5,16 +5,66 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventor</title>
+    <title>Inventor V0.0.1</title>
     <link rel="stylesheet" href="/static/css/bootstrap_5-2-2.css">
     <script src="/static/js/bootstrap_5-2-2.js"></script>
+
+    <style>
+        body {
+            background: #fff;
+        }
+
+        .clock {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            color: #17D4FE;
+            font-size: 60px;
+            font-family: Orbitron;
+            letter-spacing: 7px;
+        }
+    </style>
+
 </head>
 
 <body>
 
     {% include "/menu.html" %}
 
-    home
+    <div id="MyClockDisplay" class="clock" onload="showTime()"></div>
+
+    <script>
+        function showTime() {
+            var date = new Date();
+            var h = date.getHours(); // 0 - 23
+            var m = date.getMinutes(); // 0 - 59
+            var s = date.getSeconds(); // 0 - 59
+            var session = "AM";
+
+            if (h == 0) {
+                h = 12;
+            }
+
+            if (h > 12) {
+                h = h - 12;
+                session = "PM";
+            }
+
+            h = (h < 10) ? "0" + h : h;
+            m = (m < 10) ? "0" + m : m;
+            s = (s < 10) ? "0" + s : s;
+
+            var time = h + ":" + m + ":" + s + " " + session;
+            document.getElementById("MyClockDisplay").innerText = time;
+            document.getElementById("MyClockDisplay").textContent = time;
+
+            setTimeout(showTime, 1000);
+
+        }
+
+        showTime();
+    </script>
 
 </body>
 
